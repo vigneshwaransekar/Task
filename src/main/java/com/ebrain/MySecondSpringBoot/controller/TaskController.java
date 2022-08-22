@@ -1,6 +1,5 @@
 package com.ebrain.MySecondSpringBoot.controller;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.ebrain.MySecondSpringBoot.entity.Task;
+import com.ebrain.MySecondSpringBoot.enumeration.TaskPriority;
 import com.ebrain.MySecondSpringBoot.enumeration.TaskStatus;
 import com.ebrain.MySecondSpringBoot.service.TaskService;
 
@@ -44,22 +43,18 @@ public class TaskController {
 
 	@GetMapping("/get")
 	public Iterable<Task> get() {
-
 		return taskService.findAll();
-
 	}
 
 	@PutMapping("/update")
 	public Task update(@RequestBody Task request) {
-
 		return taskService.update(request);
-
 	}
 
 	@DeleteMapping("/delete/{taskId}")
-	public void deleteTask(@PathVariable("taskId") Integer taskId) {
+	public String deleteTask(@PathVariable("taskId") Integer taskId) {
 		taskService.deleteTask(taskId);
-
+     	return "Deleted successfully";
 	}
 
 	@GetMapping("/get/{taskId}")
@@ -67,21 +62,23 @@ public class TaskController {
 		Optional<Task> task = taskService.findById(taskId);
 		return task.get();
 	}
-	
 
-	@GetMapping("/get/{status}")
-	public void getTaskStatus(@PathVariable("status") TaskStatus status,@RequestBody Task request) {
-		List<Task> statusList = taskService
-				.findByStatus(TaskStatus.open);
-	
+	@GetMapping("/Status/{status}")
+	public List<Task> getStatus(@PathVariable("status") TaskStatus status) {
+		List<Task> statusList = taskService.findByStatus(status);
+		return statusList;
 	}
-	
-	
-	
 
-//	@GetMapping("/get/{dueDate}")
-//	public Task getTodayTask(@PathVariable("dueDate") Date dueDate) {
-//		Optional<Task> task = taskService.findByTodayTask(dueDate);
-//		return task.get();
-//	}
+	@GetMapping("/Priority/{priority}")
+	public List<Task> getPriority(@PathVariable("priority") TaskPriority priority) {
+		List<Task> priorityList = taskService.findByPriority(priority);
+		return priorityList;
+	}
+
+	@GetMapping("/date/{dueDate}")
+	public List<Task> getDueDate(@PathVariable("dueDate") String dueDate) {
+		List<Task> dueDateList = taskService.findByDueDate(dueDate);
+		return dueDateList;
+	}
+
 }
